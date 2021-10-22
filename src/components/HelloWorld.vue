@@ -1,14 +1,25 @@
 <template>
   <div class="hello">
     <ul>
-      <li v-for="(item, index) in dataList" :key="item.value" @mouseenter="mouseSelect(index)" @mouseleave="leaveSelect">
+      <li
+        v-for="(item, index) in dataList"
+        :key="item.value"
+        @mouseenter="mouseSelect(index)"
+        @mouseleave="leaveSelect"
+      >
         <input
           type="checkbox"
           :checked="item.status === 'done'"
           @change="checkSelet($event, item)"
         />
         <span>{{ item.name }}: {{ item.content }}</span>
-        <img src="../assets/delete.png" width="16px" class="imgClass" v-show="delIconIndex === index" @click="delItem(index)">
+        <img
+          src="../assets/delete.png"
+          width="16px"
+          class="imgClass"
+          v-show="delIconIndex === index"
+          @click="delItem(index)"
+        />
       </li>
     </ul>
   </div>
@@ -30,24 +41,20 @@ export default class HelloWorld extends Vue {
   private dataList: Array<itemType> = localStorage.getItem("dataList")
     ? JSON.parse(<string>localStorage.getItem("dataList"))
     : [];
-  private delIconIndex:number = -1
-  mounted() {
-    this.setValue();
-  }
-  setValue() {}
+  private delIconIndex: number = -1;
   checkSelet(e: Event, item: itemType) {
     let checked = (<HTMLInputElement>e.target).checked;
     item.status = checked ? "done" : "todo";
     localStorage.setItem("dataList", JSON.stringify(this.dataList));
   }
-  mouseSelect(index:number) {
-    this.delIconIndex = index
+  mouseSelect(index: number) {
+    this.delIconIndex = index;
   }
   leaveSelect() {
-    this.delIconIndex = -1
+    this.delIconIndex = -1;
   }
-  delItem(index: number){
-    this.dataList.splice(index, 1)
+  delItem(index: number) {
+    this.dataList.splice(index, 1);
     localStorage.setItem("dataList", JSON.stringify(this.dataList));
   }
 }
@@ -70,10 +77,10 @@ li {
   margin-bottom: 6px;
   text-align: left;
   overflow: hidden;
-  &:hover{
+  &:hover {
     background: #bbb;
   }
-  .imgClass{
+  .imgClass {
     float: right;
     margin-right: 4px;
     margin-top: 2px;
