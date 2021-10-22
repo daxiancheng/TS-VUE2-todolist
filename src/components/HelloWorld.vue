@@ -1,57 +1,83 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
     <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener">typescript</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
+      <li v-for="(item, index) in dataList" :key="item.value" @mouseenter="mouseSelect(item)" @mouseleave="leaveSelect">
+        <input
+          type="checkbox"
+          :checked="item.status === 'done'"
+          @change="checkSelet($event, item)"
+        />
+        <span>{{ item.name }}: {{ item.content }}</span>
+        <img src="../assets/delete.png" width="16px" class="imgClass" v-show="delIconIndex === index" @click="delItem(index)">
+      </li>
     </ul>
   </div>
 </template>
-
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { itemType } from "../interface/index";
 
 @Component
 export default class HelloWorld extends Vue {
-  @Prop() private msg!: string;
+  // 感叹号是非null和非undefined的类型断言
+  @Prop() content!: Partial<itemType>;
+  @Watch("content", { deep: true }) addContent(newValue: Partial<itemType>) {
+    let length = this.dataList.length;
+    let item = { name: `任务${length + 1}`, ...newValue };
+    this.dataList.push(<itemType>item);
+    localStorage.setItem("dataList", JSON.stringify(this.dataList));
+  }
+  private dataList: Array<itemType> = localStorage.getItem("dataList")
+    ? JSON.parse(<string>localStorage.getItem("dataList"))
+    : [];
+  private delIconIndex:number = -1
+  mounted() {
+    this.setValue();
+  }
+  setValue() {}
+  checkSelet(e: Event, item: itemType) {
+    let checked = (<HTMLInputElement>e.target).checked;
+    item.status = checked ? "done" : "todo";
+    localStorage.setItem("dataList", JSON.stringify(this.dataList));
+  }
+  mouseSelect(item: itemType) {
+    this.delIconIndex = this.dataList.indexOf(item)
+  }
+  leaveSelect() {
+    this.delIconIndex = -1
+  }
+  delItem(index: number){
+    this.dataList.splice(index, 1)
+    localStorage.setItem("dataList", JSON.stringify(this.dataList));
+  }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
 ul {
   list-style-type: none;
-  padding: 0;
+  display: inline-block;
+  padding: 20px 0px;
+  width: 226px;
+  border: 1px solid gray;
 }
 li {
-  display: inline-block;
-  margin: 0 10px;
+  list-style-type: none;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  padding: 4px 0px;
+  margin-bottom: 6px;
+  text-align: left;
+  overflow: hidden;
+  &:hover{
+    background: #bbb;
+  }
+  .imgClass{
+    float: right;
+    margin-right: 4px;
+    margin-top: 2px;
+  }
 }
 a {
   color: #42b983;

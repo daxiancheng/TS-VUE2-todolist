@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
+    // 严格模式 https://juejin.cn/post/6896680181000634376
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
