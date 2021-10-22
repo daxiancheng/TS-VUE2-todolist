@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <ul>
-      <li v-for="(item, index) in dataList" :key="item.value" @mouseenter="mouseSelect(item)" @mouseleave="leaveSelect">
+      <li v-for="(item, index) in dataList" :key="item.value" @mouseenter="mouseSelect(index)" @mouseleave="leaveSelect">
         <input
           type="checkbox"
           :checked="item.status === 'done'"
@@ -40,8 +40,8 @@ export default class HelloWorld extends Vue {
     item.status = checked ? "done" : "todo";
     localStorage.setItem("dataList", JSON.stringify(this.dataList));
   }
-  mouseSelect(item: itemType) {
-    this.delIconIndex = this.dataList.indexOf(item)
+  mouseSelect(index:number) {
+    this.delIconIndex = index
   }
   leaveSelect() {
     this.delIconIndex = -1
