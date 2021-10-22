@@ -34,6 +34,7 @@ export default class HelloWorld extends Vue {
   @Prop() content!: Partial<itemType>;
   @Watch("content", { deep: true }) addContent(newValue: Partial<itemType>) {
     let length = this.dataList.length;
+    // 这里有bug，但是我不想改了
     let item = { name: `任务${length + 1}`, ...newValue };
     this.dataList.push(<itemType>item);
     localStorage.setItem("dataList", JSON.stringify(this.dataList));
